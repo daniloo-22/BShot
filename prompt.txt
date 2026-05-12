@@ -1,0 +1,43 @@
+Crea un'app Python con UI grafica (customtkinter, dark mode) chiamata "BShot". Compilala in .exe con PyInstaller --onefile --windowed.
+
+FLUSSO:
+1. L'utente configura le impostazioni nell'UI
+2. Clicca "Seleziona Area" → la finestra si nasconde e appare un overlay trasparente a tutto schermo su cui l'utente trascina il mouse per selezionare la regione da catturare (come uno snipping tool). L'area selezionata viene mostrata come anteprima nell'UI.
+3. Clicca "Avvia" → countdown → loop automatico: screenshot della sola area selezionata → salva → premi freccia destra → aspetta delay → ripeti
+
+IMPOSTAZIONI UI:
+- Numero pagina iniziale (input numerico, es. 42) → i file si salvano come pagina_0042.png, pagina_0043.png, ecc.
+- Numero totale di pagine da catturare
+- Delay tra pagine (float, secondi)
+- Countdown avvio (int, secondi)
+- Cartella output: campo testo + bottone 📁 filedialog.askdirectory()
+- Anteprima coordinate area selezionata (es. "Area: 120x80 → 1400x900")
+
+SELEZIONE AREA (overlay):
+- Usa tkinter Toplevel fullscreen con sfondo semi-trasparente nero (alpha 0.3)
+- Cursore crosshair
+- L'utente clicca e trascina → rettangolo di selezione con bordo rosso/bianco visibile
+- Al rilascio del mouse: salva le coordinate (x1,y1,x2,y2), chiude l'overlay, ripristina la finestra principale
+
+CATTURA:
+- Usa Pillow ImageGrab.grab(bbox=(x1, y1, x2, y2)) per catturare solo l'area selezionata
+- Salva come pagina_{numero:04d}.png nella cartella scelta
+
+THREADING:
+- Il loop gira in un thread separato, non blocca l'UI
+- Stop button interrompe il loop in modo sicuro tramite flag
+
+UI (customtkinter dark):
+- Header con titolo "BShot"
+- Card impostazioni
+- Bottone "🎯 Seleziona Area" prominente
+- Progress bar + label stato (arancio countdown, verde in corso, rosso errore)
+- Bottoni ▶ Avvia e ⏹ Stop
+
+TECH STACK: Python 3.11, customtkinter, pyautogui, Pillow, PyInstaller
+
+Dopo il codice in main.py esegui:
+pip install customtkinter pyautogui pillow pyinstaller
+pyinstaller --onefile --windowed --name BShot main.py
+
+Exe finale: dist/BShot.exe
